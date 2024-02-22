@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import useTodoStore from "../stores/todoStore";
-import { ToDo } from "../stores/todoStore";
+import { ToDo, useTodoStoreWithSelectors } from "../stores/todoStore";
 import "./todoList.css";
 
 export default function ToDoList() {
   const [title, setTitle] = useState("");
 
-  const { todos, setTodos, toggleComplete, removeTodo, addTodo } = useTodoStore();
+  const { todos, setTodos, toggleComplete, removeTodo } = useTodoStore();
+
+  // Recommended to use selectors to avoid unnecessary re-renders
+  const addTodoWithSelector = useTodoStoreWithSelectors.use.addTodo();
 
   useEffect(() => {
     fetch("https://jsonplaceholder.typicode.com/todos?userId=1")
@@ -27,7 +30,7 @@ export default function ToDoList() {
     };
 
     setTitle("");
-    addTodo(todo);
+    addTodoWithSelector(todo);
   };
 
   return (
