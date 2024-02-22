@@ -18,6 +18,7 @@ export type ToDoState = {
 };
 
 
+// Autogenerate selectors
 type WithSelectors<S> = S extends { getState: () => infer T }
   ? S & { use: { [K in keyof T]: () => T[K] } }
   : never
@@ -34,8 +35,12 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
   return store
 }
 
+const initialState = {
+  todos: [] as ToDo[],
+};
+
 const store = (set) => ({
-  todos: [],
+  ...initialState,
   setTodos: (todos) => set({ todos }),
   addTodo: (todo) =>
     set((state) => ({
@@ -47,9 +52,12 @@ const store = (set) => ({
     set((state) => ({
       todos: state.todos.map((item) => item.id === todo.id ? { ...todo, completed: !todo.completed } : item),
     })),
+  resetState: () => set(initialState)
 })
 
 const useTodoStore = create<ToDoState>()(devtools(store));
+
+// Export the store with selectors
 export const useTodoStoreWithSelectors = createSelectors(useTodoStore)
 
 export default useTodoStore;
